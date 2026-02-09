@@ -152,7 +152,7 @@ public class PlaybackController implements PlaybackControllerNotifiable {
 
     public float getPlaybackSpeed() {
         if (hasInitializedVideoManager()) {
-            // Actually poll the video manager, since exoplayer can revert back
+            // Actually poll the video manager, since playback can revert back
             // to 1x if it can't go faster, so we should check directly
             return mVideoManager.getPlaybackSpeed();
         } else {
@@ -491,7 +491,7 @@ public class PlaybackController implements PlaybackControllerNotifiable {
                 // undo setting mSeekPosition for liveTV
                 if (isLiveTv) mSeekPosition = -1;
 
-                VideoOptions internalOptions = buildExoPlayerOptions(forcedSubtitleIndex, forcedAudioLanguage, item);
+                VideoOptions internalOptions = buildPlaybackOptions(forcedSubtitleIndex, forcedAudioLanguage, item);
 
                 playInternal(getCurrentlyPlayingItem(), position, internalOptions);
                 mPlaybackState = PlaybackState.BUFFERING;
@@ -507,7 +507,7 @@ public class PlaybackController implements PlaybackControllerNotifiable {
     }
 
     @NonNull
-    private VideoOptions buildExoPlayerOptions(
+    private VideoOptions buildPlaybackOptions(
             @Nullable Integer forcedSubtitleIndex,
             @Nullable String forcedAudioLanguage,
             BaseItemDto item) {
@@ -705,7 +705,7 @@ public class PlaybackController implements PlaybackControllerNotifiable {
         } else if (isTranscoding() && getCurrentMediaSource().getDefaultAudioStreamIndex() != null) {
             currIndex = getCurrentMediaSource().getDefaultAudioStreamIndex();
         } else if (hasInitializedVideoManager() && !isTranscoding()) {
-            currIndex = mVideoManager.getExoPlayerTrack(MediaStreamType.AUDIO, getCurrentlyPlayingItem().getMediaStreams());
+            currIndex = mVideoManager.getMediaTrack(MediaStreamType.AUDIO, getCurrentlyPlayingItem().getMediaStreams());
         }
         return currIndex;
     }
@@ -797,7 +797,7 @@ public class PlaybackController implements PlaybackControllerNotifiable {
         // get current timestamp first
         refreshCurrentPosition();
 
-        if (!isTranscoding() && mVideoManager.setExoPlayerTrack(index, MediaStreamType.AUDIO, currentMediaSource.getMediaStreams())) {
+        if (!isTranscoding() && mVideoManager.setMediaTrack(index, MediaStreamType.AUDIO, currentMediaSource.getMediaStreams())) {
             mCurrentOptions.setMediaSourceId(currentMediaSource.getId());
             mCurrentOptions.setAudioStreamIndex(index);
         } else if (isTranscoding()) {
@@ -980,7 +980,7 @@ public class PlaybackController implements PlaybackControllerNotifiable {
         if (mCurrentStreamInfo == null) return;
 
         // rebuild the stream
-        // if an older device uses exoplayer to play a transcoded stream but falls back to the generic http stream instead of hls, rebuild the stream
+        // if an older device plays a transcoded stream but falls back to generic http instead of hls, rebuild the stream
         if (!mVideoManager.isSeekable()) {
             Timber.d("Seek method - rebuilding the stream");
             //mkv transcodes require re-start of stream for seek

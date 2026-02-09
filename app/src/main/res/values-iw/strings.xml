@@ -551,11 +551,9 @@
     <string name="pref_screensaver_ageratingrequired_enabled">מציג רק פריטים שיש להם הגבלת גיל</string>
     <string name="pref_screensaver_ageratingrequired_disabled">מציג את כל הפריטים</string>
     <string name="pref_screensaver_ageratingmax">הגבלת גיל מרבית</string>
-    <string name="prefer_exoplayer_ffmpeg">העדף FFmpeg לניגון שמע</string>
     <string name="lbl_subtitle_background_color">צבע הרקע</string>
     <string name="lbl_subtitle_text_stroke_color">צבע קו המתאר</string>
     <string name="lbl_subtitle_text_color">צבע הטקסט</string>
-    <string name="prefer_exoplayer_ffmpeg_content">השתמש ב-FFmpeg לפיענוח שמע, גם אם זמינים מקודדים של הפלטפורמה.</string>
     <string name="video_start_delay">עיכוב בתחילת הוידיאו</string>
     <string name="segment_action_nothing">אל תעשה דבר</string>
     <string name="segment_type_outro">סיומות</string>

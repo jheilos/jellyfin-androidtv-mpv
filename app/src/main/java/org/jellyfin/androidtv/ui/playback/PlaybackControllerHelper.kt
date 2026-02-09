@@ -42,7 +42,7 @@ fun PlaybackController.getLiveTvChannel(
  */
 fun PlaybackController.disableDefaultSubtitles() {
 	Timber.i("Disabling non-baked subtitles")
-	mVideoManager.setExoPlayerTrack(-1, MediaStreamType.SUBTITLE, null)
+	mVideoManager.setMediaTrack(-1, MediaStreamType.SUBTITLE, null)
 }
 
 /**
@@ -106,8 +106,8 @@ fun PlaybackController.setSubtitleIndex(index: Int, force: Boolean = false) {
 				Timber.i("Enabling subtitle track $index via method ${stream.deliveryMethod}")
 				mCurrentOptions.subtitleStreamIndex = index
 
-				// Use setExoPlayerTrack which maps Jellyfin indices to mpv track IDs
-				val success = mVideoManager.setExoPlayerTrack(
+				// Use setMediaTrack which maps Jellyfin indices to mpv track IDs
+				val success = mVideoManager.setMediaTrack(
 					index,
 					MediaStreamType.SUBTITLE,
 					currentlyPlayingItem.mediaStreams
@@ -144,7 +144,7 @@ private var mediaSegmentRunnable: Runnable? = null
 
 /**
  * Apply media segments for the current item.
- * For mpv, we use a position-monitoring approach since we don't have ExoPlayer's message system.
+ * For mpv, we use a position-monitoring approach since we don't have player message callbacks.
  */
 fun PlaybackController.applyMediaSegments(
 	item: BaseItemDto,

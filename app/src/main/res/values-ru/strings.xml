@@ -534,8 +534,6 @@
     <string name="dts_hd">DTS:HD</string>
     <string name="past_week">Прошлая неделя</string>
     <string name="scheduled_in_next_24_hours">Запланировано на следующие 24 часа</string>
-    <string name="prefer_exoplayer_ffmpeg">Предпочитать FFmpeg для воспроизведения аудио</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Использовать FFmpeg для декодирования аудио, даже если доступны кодеки системы.</string>
     <string name="video_start_delay">Задержка запуска видео</string>
     <string name="segment_type_recap">В предыдущих сериях</string>
     <string name="pref_mediasegment_actions">Действия с медиасегментами</string>

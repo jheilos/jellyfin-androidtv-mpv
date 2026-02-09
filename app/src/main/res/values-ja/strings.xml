@@ -461,8 +461,6 @@
     </plurals>
     <string name="lbl_on_now">放送中</string>
     <string name="app_notification_update_soon">次のアップデート後にアプリを使用し続けるには、サーバーを %1$s から少なくとも %2$sにアップデートしてください。</string>
-    <string name="prefer_exoplayer_ffmpeg">音声再生用FFmpeg</string>
-    <string name="prefer_exoplayer_ffmpeg_content">platform codecsが利用可能の場合でも 音声decodeにFFmpegを使用する。</string>
     <string name="pref_troubleshooting">トラブルシューティング</string>
     <string name="pref_report_device_profile_failure">ドキュメント送信失敗。Jellyfinサーバーはクライエントログを禁じているかもしれません。</string>
     <plurals name="tracks">

@@ -554,8 +554,6 @@
     <string name="lbl_subtitle_text_color">Color del text</string>
     <string name="lbl_subtitle_background_color">Color del fons</string>
     <string name="lbl_subtitle_text_stroke_color">Color del contorn</string>
-    <string name="prefer_exoplayer_ffmpeg">Prefereix FFmpeg per a la reproducció d\'àudio</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Fes servir FFmpeg per a descodificar l\'àudio, encara que els còdecs de plataforma estiguin disponibles.</string>
     <string name="default_video_zoom">Configuració per defecte dels augments</string>
     <string name="segment_action_skip">Salta</string>
     <string name="segment_type_intro">Introduccions</string>

@@ -459,7 +459,6 @@
     <string name="pref_external_player">Naudoti išorinį grotuvą</string>
     <string name="channels">Kanalai</string>
     <string name="past_week">Pastąrąją savaitę</string>
-    <string name="prefer_exoplayer_ffmpeg">Teikti pirmenybę FFmpeg garso atkūrimui</string>
     <string name="segment_type_commercial">Reklamos</string>
     <string name="pref_subtitles_background_opacity">Subtitrų fono skaidrumas</string>
     <string name="pref_report_device_profile_title">Pranešti serveriui apie grojimo galimybes</string>
@@ -497,7 +496,6 @@
     <string name="ac3">DD</string>
     <string name="random">Atsitiktinis</string>
     <string name="scheduled_in_next_24_hours">Suplanuota sekančioms 24 valandoms</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Naudoti FFmpeg garso dekodavimui, net jei yra platformos kodeksai.</string>
     <string name="segment_type_unknown">Nežinomi segmentai</string>
     <string name="skip_forward_length">Praleidimo į priekį trukmė</string>
     <plurals name="episodes">

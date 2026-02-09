@@ -528,7 +528,6 @@
     <string name="dca">DTS</string>
     <string name="ac3">DD</string>
     <string name="eac3">DD+</string>
-    <string name="prefer_exoplayer_ffmpeg">Daj prednost FFMpeg-u za audio</string>
     <string name="continue_listening">Nastavi slušati</string>
     <string name="lbl_home">Početna</string>
     <string name="all_channels">Svi kanali</string>
@@ -552,7 +551,6 @@
     <string name="segment_action_ask_to_skip">Pitaj za preskok</string>
     <string name="pref_mediasegment_actions">Akcije dijelova medija</string>
     <string name="app_notification_update_soon">Nadogradi server sa %1$s na barem %2$s kako bi nastavio koristiti aplikaciju nakon nadogradnje.</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Daj prednost FFMpeg-u za audio iako Codec postoji na uređaju.</string>
     <string name="pref_external_player">Koristi vanjski video reproduktor</string>
     <string name="current_queue">Trenutni niz</string>
     <string name="lbl_subtitle_text_color">Boja podnaslova</string>

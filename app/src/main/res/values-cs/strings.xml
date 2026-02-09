@@ -553,7 +553,6 @@
     <string name="scheduled_in_next_24_hours">Naplánováno v dalších 24 hodinách</string>
     <string name="past_24_hours">Posledních 24 hodin</string>
     <string name="default_video_zoom">Výchozí režim přiblížení</string>
-    <string name="prefer_exoplayer_ffmpeg">Upřednostňovat FFmpeg pro přehrávání audia</string>
     <string name="segment_type_outro">Závěry</string>
     <string name="segment_action_nothing">Nic nedělat</string>
     <string name="segment_action_skip">Přeskočit</string>
@@ -567,7 +566,6 @@
     <string name="lbl_subtitle_text_color">Barva textu</string>
     <string name="lbl_subtitle_background_color">Barva pozadí</string>
     <string name="segment_type_unknown">Neznámé segmenty</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Pro dekódování zvuku použít FFmpeg, i když jsou dostupné kodeky pro danou platformu.</string>
     <string name="segment_action_ask_to_skip">Zeptat se na přeskočení</string>
     <string name="lbl_subtitle_text_stroke_color">Barva obrysu</string>
     <string name="pref_mediasegment_actions">Akce mediálních segmentů</string>

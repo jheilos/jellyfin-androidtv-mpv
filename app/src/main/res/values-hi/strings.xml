@@ -478,7 +478,6 @@
     <string name="pref_crash_reports">सर्वर पर क्रैश रिपोर्ट भेजें</string>
     <string name="pref_crash_report_logs_disabled">लॉग को क्रैश रिपोर्ट में शामिल नहीं किया जाएगा</string>
     <string name="segment_type_unknown">अज्ञात खंड</string>
-    <string name="prefer_exoplayer_ffmpeg">ऑडियो प्लेबैक के लिए FFmpeg को प्राथमिकता दें</string>
     <string name="segment_action_nothing">कुछ मत करो</string>
     <string name="pref_screensaver_ageratingmax_unlimited">अधिकतम आयु बंद करें</string>
     <string name="pref_screensaver_inapp_timeout">इसके बाद स्क्रीनसेवर प्रारंभ करें</string>
@@ -488,7 +487,6 @@
     <string name="pref_screensaver_ageratingrequired_title">आयु रेटिंग की आवश्यकता</string>
     <string name="pref_screensaver_ageratingrequired_disabled">सभी आइटम दिखाए जा रहे हैं</string>
     <string name="app_notification_update_soon">अगले अपडेट के बाद ऐप का उपयोग जारी रखने के लिए अपने सर्वर को %1$s से कम से कम %2$s तक अपडेट करें।</string>
-    <string name="prefer_exoplayer_ffmpeg_content">ऑडियो को डिकोड करने के लिए FFmpeg का उपयोग करें, भले ही प्लेटफ़ॉर्म कोडेक उपलब्ध हों।</string>
     <string name="segment_action_skip">स्किप</string>
     <string name="preference_enable_trickplay">वीडियो प्लेयर में ट्रिकप्ले चालू करें</string>
     <string name="speech_error_no_permission">माइक्रोफ़ोन इस्तेमाल करने की अनुमति नहीं है। कृपया सिस्टम सेटिंग में जाकर इसे चालू करें।</string>

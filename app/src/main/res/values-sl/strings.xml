@@ -568,8 +568,6 @@
     <string name="runtime_hours_minutes">%1$dh %2$dm</string>
     <string name="runtime_minutes">%1$dm</string>
     <string name="eac3">DD+</string>
-    <string name="prefer_exoplayer_ffmpeg">Za predvajanje zvoka raje FFmpeg</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Uporabite FFmpeg za dekodiranje zvoka, tudi če so na voljo kodeki platforme.</string>
     <string name="past_24_hours">Zadnjih 24 ur</string>
     <string name="scheduled_in_next_24_hours">Načrtovano v naslednjih 24 urah</string>
     <string name="dts_x">DTS:X</string>

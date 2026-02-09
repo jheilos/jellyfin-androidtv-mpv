@@ -519,8 +519,6 @@
     <string name="past_week">Past week</string>
     <string name="scheduled_in_next_24_hours">Scheduled in next 24 hours</string>
     <string name="past_24_hours">Past 24 hours</string>
-    <string name="prefer_exoplayer_ffmpeg">Prefer FFmpeg for audio playback</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Use FFmpeg to decode audio, even if platform codecs are available.</string>
     <string name="default_video_zoom">Default zoom mode</string>
     <string name="video_start_delay">Video start delay</string>
     <string name="video_auto_play">Auto-start playback</string>

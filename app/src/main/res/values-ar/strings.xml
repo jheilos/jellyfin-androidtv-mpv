@@ -563,8 +563,6 @@
     <string name="past_week">الاسبوع الماضي</string>
     <string name="scheduled_in_next_24_hours">مجدول في الـ24 ساعة القادمة</string>
     <string name="past_24_hours">الـ24 ساعة الفائتة</string>
-    <string name="prefer_exoplayer_ffmpeg">يُفضل FFmpeg لتشغيل الصوت</string>
-    <string name="prefer_exoplayer_ffmpeg_content">استخدام FFmpeg لفك ترميز الصوت, حتى مع توفر منصات الترميز.</string>
     <string name="default_video_zoom">نمط التقريب الافتراضي</string>
     <string name="video_start_delay">مؤخِر بدء الفيديو</string>
     <string name="pref_mediasegment_actions">انشطة قِطع الوسلئط</string>

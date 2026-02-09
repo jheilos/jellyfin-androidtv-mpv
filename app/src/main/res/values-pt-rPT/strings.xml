@@ -551,8 +551,6 @@
     <string name="past_week">Semana passada</string>
     <string name="scheduled_in_next_24_hours">Agendado nas próximas 24 horas</string>
     <string name="past_24_hours">Últimas 24 horas</string>
-    <string name="prefer_exoplayer_ffmpeg">Preferir FFmpeg para reprodução de áudio</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Utilizar FFmpeg para descodificar áudio, ainda que existam codecs na plataforma.</string>
     <string name="lbl_subtitle_text_color">Cor do texto</string>
     <string name="lbl_subtitle_background_color">Cor do fundo</string>
     <string name="lbl_subtitle_text_stroke_color">Cor do contorno do texto</string>

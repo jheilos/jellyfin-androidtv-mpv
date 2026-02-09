@@ -500,8 +500,6 @@
     <string name="pref_screensaver_ageratingmax_entry">直至 %1$d 歲</string>
     <string name="pref_screensaver_ageratingrequired_disabled">顯示所有項目</string>
     <string name="pref_screensaver_ageratingrequired_enabled">僅顯示設置了年齡分級的項目</string>
-    <string name="prefer_exoplayer_ffmpeg">首選使用 FFmpeg 進行音訊播放</string>
-    <string name="prefer_exoplayer_ffmpeg_content">使用 FFmpeg 解碼音訊，即使平台有解碼器可用。</string>
     <string name="lbl_subtitle_text_color">字幕文字顏色</string>
     <string name="lbl_subtitle_background_color">字幕背景顏色</string>
     <string name="lbl_subtitle_text_stroke_color">字幕邊框顏色</string>

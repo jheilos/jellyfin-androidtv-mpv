@@ -537,8 +537,6 @@
     <string name="all_channels">Alle kanaler</string>
     <string name="lbl_subtitle_background_color">Bakgrunnsfarge for tekst</string>
     <string name="app_notification_update_soon">Oppdater tjeneren fra %1$s til minst %2$s for å fortsette å bruke appen etter neste oppdatering.</string>
-    <string name="prefer_exoplayer_ffmpeg">Foretrekk FFmpeg for lydavspilling</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Bruk FFmpeg for å dekode lyd, selv om plattformkodeker er tilgjengelige.</string>
     <string name="lbl_subtitle_text_stroke_color">Strekfarge for tekst</string>
     <string name="lbl_subtitle_text_color">Farge for tekst</string>
     <string name="current_queue">Aktuell kø</string>

@@ -554,8 +554,6 @@
     <string name="pref_screensaver_ageratingrequired_enabled">Mostra solo gli elementii con classificazione per età</string>
     <string name="lbl_subtitle_text_color">Colore testo</string>
     <string name="lbl_subtitle_background_color">Colore sfondo</string>
-    <string name="prefer_exoplayer_ffmpeg">Preferisci FFmpeg per la riproduzione audio</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Usa FFmpeg per la decodifica audia anche se il dispositivo fornisce il codec nativamente.</string>
     <string name="default_video_zoom">Modalità di zoom predefinita</string>
     <string name="video_start_delay">Ritardo riproduzione video</string>
     <string name="segment_action_ask_to_skip">Chiedi per saltare</string>

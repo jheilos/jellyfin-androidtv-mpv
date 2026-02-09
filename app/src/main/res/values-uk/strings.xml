@@ -565,8 +565,6 @@
     <string name="lbl_subtitle_background_color">Колір фону</string>
     <string name="lbl_subtitle_text_color">Колір тексту</string>
     <string name="lbl_subtitle_text_stroke_color">Колір контуру</string>
-    <string name="prefer_exoplayer_ffmpeg">Надавати перевагу FFmpeg для відтворення аудіо</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Використовувати FFmpeg для декодування аудіо, навіть якщо доступні кодеки платформи.</string>
     <string name="video_start_delay">Затримка запуску відео</string>
     <string name="segment_action_ask_to_skip">Запитати про пропуск</string>
     <string name="skip_forward_length">Довжина пропуску вперед</string>

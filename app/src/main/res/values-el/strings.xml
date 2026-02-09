@@ -516,7 +516,6 @@
     <string name="pref_screensaver_ageratingrequired_title">Απαιτείται ηλικία καταλληλότητας</string>
     <string name="app_notification_update_soon">Ενημερώστε τον διακομιστή σας από %1$s σε τουλάχιστον %2$s για να συνεχίσετε να χρησιμοποιείτε την εφαρμογή μετά την επόμενη ενημέρωση.</string>
     <string name="current_queue">Τρέχουσα ουρά</string>
-    <string name="prefer_exoplayer_ffmpeg">Προτίμηση FFmpeg για αναπαραγωγή ήχου</string>
     <string name="indicator_subtitles">CC</string>
     <string name="dts_x">DTS:X</string>
     <string name="dca">DTS</string>
@@ -528,7 +527,6 @@
     <string name="pref_screensaver_ageratingmax_zero">Ολες οι ηλικίες</string>
     <string name="runtime_hours_minutes">%1$dω %2$dλ</string>
     <string name="runtime_minutes">%1$dλ</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Χρησιμοποίησε FFmpeg για την αποκωδικοποίησή του ήχου, ακόμα και αν οι κωδικοποιητές δεν είναι διαθέσιμοι.</string>
     <string name="default_video_zoom">Προεπιλεγμένη λειτουργία Ζουμ</string>
     <string name="video_start_delay">Καθυστέρηση εκκίνησής βίντεο</string>
     <string name="settings_description">Αλλάξτε την εφαρμογή σύμφωνα με τις προτιμήσεις σας</string>

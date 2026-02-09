@@ -506,7 +506,6 @@
     <string name="lbl_subtitle_background_color">Color del fondo</string>
     <string name="pref_external_player">Usar un reproductor externo</string>
     <string name="random">Aleatorio</string>
-    <string name="prefer_exoplayer_ffmpeg">Preferir FFmpeg para la reproducción de audio</string>
     <string name="pref_playback_advanced">Preferencias avanzadas de reproducción</string>
     <string name="segment_action_skip">Omitir</string>
     <string name="unreleased">No se ha publicado aún</string>
@@ -560,7 +559,6 @@
     <string name="pref_subtitles_bold">Texto en negrita</string>
     <string name="indicator_subtitles">CC</string>
     <string name="indicator_subtitles_hearing_impaired">Subtítulos (SDH)</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Utiliza FFmpeg para decodificar audio, incluso si hay códecs de la plataforma disponibles.</string>
     <string name="default_video_zoom">Modo de zoom predeterminado</string>
     <string name="video_start_delay">Retraso en el inicio del vídeo</string>
     <string name="pref_mediasegment_actions">Acciones sobre segmentos de medios</string>

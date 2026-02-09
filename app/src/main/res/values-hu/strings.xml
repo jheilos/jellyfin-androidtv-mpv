@@ -542,8 +542,6 @@
     <string name="app_notification_update_soon">Frissítsd a szervert %1$s verzióról legalább %2$s verzióra, hogy tudd tovább használni az applikációt a következő frissítés után is.</string>
     <string name="pref_external_player">Külső lejátszó használata</string>
     <string name="current_queue">Lejátszási sor</string>
-    <string name="prefer_exoplayer_ffmpeg">FFmpeg hanglejátszás előnyben részesítése</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Használja az FFmpeg-et a hang dekódolásához, még akkor is, ha elérhetőek a platform kodekek.</string>
     <string name="lbl_subtitle_text_color">Felirat szövegének színe</string>
     <string name="lbl_subtitle_background_color">Felirat háttérszíne</string>
     <string name="lbl_subtitle_text_stroke_color">Felirat körvonal színe</string>

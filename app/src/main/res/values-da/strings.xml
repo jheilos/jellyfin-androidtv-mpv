@@ -537,7 +537,6 @@
     <string name="dts_x">DTS:X</string>
     <string name="dts_hd">DTS:HD</string>
     <string name="pref_screensaver_ageratingmax">Maksimal aldersgrænse</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Brug FFmpeg til at afkode lyd, selvom at platformens kodeks er tilgængelige.</string>
     <string name="segment_type_commercial">Reklamer</string>
     <string name="lbl_subtitle_text_color">Farve på undertekster</string>
     <string name="past_24_hours">Sidste 24 timer</string>
@@ -550,7 +549,6 @@
     <string name="past_week">Sidste uge</string>
     <string name="segment_type_recap">Resumeer</string>
     <string name="scheduled_in_next_24_hours">Planlagt indenfor de næste 24 timer</string>
-    <string name="prefer_exoplayer_ffmpeg">Foretræk FFmpeg for lydafspilning</string>
     <string name="video_start_delay">Videoforsinkelse</string>
     <string name="segment_type_intro">Introer</string>
     <string name="segment_type_outro">Outroer</string>

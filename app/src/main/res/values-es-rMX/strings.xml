@@ -484,8 +484,6 @@
         <item quantity="many">%1$s de minutos</item>
         <item quantity="other">%1$s minutos</item>
     </plurals>
-    <string name="prefer_exoplayer_ffmpeg">Preferir FFmpeg para la reproducción de audio</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Usar FFmpeg para la decodificación del audio, incluso si los códecs de plataforma están disponibles.</string>
     <plurals name="seconds">
         <item quantity="one">%1$s segundo</item>
         <item quantity="many">%1$s de segundos</item>

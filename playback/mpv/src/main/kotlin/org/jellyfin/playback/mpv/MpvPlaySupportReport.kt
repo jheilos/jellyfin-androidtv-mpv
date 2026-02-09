@@ -6,7 +6,7 @@ import org.jellyfin.playback.core.support.PlaySupportReport
  * Play support report for mpv.
  *
  * mpv with FFmpeg supports virtually all media formats, so this implementation
- * is much simpler than ExoPlayer's format checking.
+ * is much simpler than decoder-specific format checking.
  *
  * @property canPlay Whether the stream can be played
  * @property reason Optional reason explaining the support status

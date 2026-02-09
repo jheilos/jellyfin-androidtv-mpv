@@ -562,9 +562,7 @@
     <string name="segment_type_preview">Adelantos</string>
     <string name="segment_type_recap">Resumen</string>
     <string name="segment_type_unknown">Segmentos desconocidos</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Usa FFmpeg para decodificar el audio, incluso si los códecs de la plataforma están disponibles.</string>
     <string name="lbl_subtitle_text_stroke_color">Color de contorno de los subtítulos</string>
-    <string name="prefer_exoplayer_ffmpeg">Preferir FFmpeg para reproducir audio</string>
     <string name="pref_mediasegment_actions">Acciones de segmentos de medios</string>
     <string name="segment_type_commercial">Publicidad</string>
     <string name="default_video_zoom">Modo de ampliación predeterminado</string>

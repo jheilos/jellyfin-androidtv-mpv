@@ -471,7 +471,6 @@
     <string name="desc_audio_night_mode">Automātiski izlīdzina audio skaļumu</string>
     <string name="lbl_subtitle_text_stroke_color">Teksta kontūras krāsa</string>
     <string name="color_pink">Rozā</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Audio dekodēšanai izmantot FFmpeg, pat ja ir pieejami platformas kodeki.</string>
     <string name="preference_enable_trickplay">Iespējot trickplay video atskaņotājā</string>
     <string name="lbl_starting_early_ending_on_schedule">Sākt %1$s agri un beigt saskaņā ar grafiku</string>
     <string name="pref_screensaver_inapp_timeout">Sākt ekrānsaudzētāju pēc</string>
@@ -555,7 +554,6 @@
     <string name="pref_subtitles_background_opacity">Subtitru fona caurspīdīgums</string>
     <string name="indicator_subtitles">CC</string>
     <string name="pref_enable_media_management">Iespējot multivides pārvaldību</string>
-    <string name="prefer_exoplayer_ffmpeg">Priekšroka FFmpeg audio atskaņošanai</string>
     <string name="segment_type_recap">Pārskati</string>
     <plurals name="episodes">
         <item quantity="zero">%1$s epizodes</item>

@@ -510,7 +510,6 @@
     <string name="lbl_still_watching_short">Две епизоде или 60 минута</string>
     <string name="lbl_still_watching_long">Пет епизода или 150 минута</string>
     <string name="lbl_still_watching_very_long">Осам епизода или 240 минута</string>
-    <string name="prefer_exoplayer_ffmpeg">Бирај FFmpeg за аудио репродукцију</string>
     <string name="past_24_hours">Претходна 24 сата</string>
     <string name="segment_action_skip">Прескочи</string>
     <string name="still_watching_label">Гледате ли и даље?</string>
@@ -541,7 +540,6 @@
     <string name="all_channels">Сви канали</string>
     <string name="current_queue">Тренутни ред</string>
     <string name="past_week">Претходна недеља</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Користи FFmpeg да декодираш аудио садржај чак и кад има других кодека.</string>
     <string name="default_video_zoom">Подразумевани начин увећања</string>
     <string name="video_start_delay">Чекање пре почетка видеа</string>
     <string name="segment_type_outro">Завршеци</string>

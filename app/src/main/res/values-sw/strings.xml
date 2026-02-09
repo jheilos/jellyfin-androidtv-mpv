@@ -515,8 +515,6 @@
     <string name="past_week">Juma lililopita</string>
     <string name="scheduled_in_next_24_hours">Zilizopangwa ndani ya saa 24 zijazo</string>
     <string name="past_24_hours">Saa 24 zilizopita</string>
-    <string name="prefer_exoplayer_ffmpeg">Pendelea FFmpeg kwa uchezaji wa sauti</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Tumia FFmpeg kusimbua sauti, hata kama kichezeshi cha mfumo kinapatikana.</string>
     <string name="default_video_zoom">Hali msingi ya kukuza picha</string>
     <string name="video_start_delay">Ucheleweshaji wa kuanza video</string>
     <string name="pref_mediasegment_actions">Hatua za sehemu za maudhui</string>

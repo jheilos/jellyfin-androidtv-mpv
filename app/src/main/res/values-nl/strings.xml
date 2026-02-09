@@ -545,8 +545,6 @@
     <string name="lbl_subtitle_text_color">Tekstkleur</string>
     <string name="lbl_subtitle_text_stroke_color">Randkleur</string>
     <string name="lbl_subtitle_background_color">Achtergrondkleur</string>
-    <string name="prefer_exoplayer_ffmpeg">FFmpeg verkiezen voor afspelen geluid</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Gebruik FFmpeg om geluid te decoderen, zelfs als er platformcodecs beschikbaar zijn.</string>
     <string name="video_start_delay">Startvertraging video</string>
     <string name="segment_action_skip">Overslaan</string>
     <string name="segment_type_commercial">Reclame</string>

@@ -404,7 +404,6 @@
     <string name="pref_enable_media_management_description">Tampilkan opsi untuk mengatur media ketika menelusuri</string>
     <string name="past_week">Minggu lalu</string>
     <string name="scheduled_in_next_24_hours">Dijadwalkan dalam 24 jam kedepan</string>
-    <string name="prefer_exoplayer_ffmpeg">Utamakan FFmpeg untuk pemutaran audio</string>
     <string name="segment_type_preview">Pratinjau</string>
     <plurals name="albums">
         <item quantity="other">%1$s album</item>

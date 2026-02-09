@@ -545,8 +545,6 @@
     <string name="lbl_subtitle_text_color">Textfärg för undertexter</string>
     <string name="lbl_subtitle_background_color">Bakgrundsfärg för undertexter</string>
     <string name="lbl_subtitle_text_stroke_color">Färg för undertextens kantlinje</string>
-    <string name="prefer_exoplayer_ffmpeg">Föredra FFmpeg för ljuduppspelning</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Använd FFmpeg för att avkoda ljud, även om det finns tillgängliga plattformscodecs.</string>
     <string name="segment_type_outro">Outro</string>
     <string name="preference_enable_trickplay">Aktivera trickplay i videospelaren</string>
     <string name="default_video_zoom">Standard zoomläge</string>

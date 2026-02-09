@@ -546,7 +546,6 @@
     <string name="app_notification_update_soon">Atualize o servidor de %1$s a pelo menos %2$s para continuar usando o aplicativo após a próxima atualização.</string>
     <string name="scheduled_in_next_24_hours">Marcado nas próximas 24 horas</string>
     <string name="past_24_hours">Últimas 24 horas</string>
-    <string name="prefer_exoplayer_ffmpeg">Preferir FFmpeg para reprodução de áudio</string>
     <string name="video_start_delay">Atraso de início de vídeo</string>
     <string name="default_video_zoom">Modo de zoom padrão</string>
     <string name="lbl_subtitle_text_color">Cor do texto</string>
@@ -557,7 +556,6 @@
     <string name="past_week">Última semana</string>
     <string name="pref_external_player">Usar reprodutor externo</string>
     <string name="current_queue">Fila atual</string>
-    <string name="prefer_exoplayer_ffmpeg_content">Usar o FFmpeg para decodificar áudio, mesmo se codecs nativos estiverem disponíveis.</string>
     <string name="segment_type_preview">Prévias</string>
     <string name="segment_type_unknown">Segmentos desconhecidos</string>
     <string name="segment_type_recap">Resumos</string>

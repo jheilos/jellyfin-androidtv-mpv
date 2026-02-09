@@ -27,7 +27,7 @@ import timber.log.Timber
 /**
  * mpv-based video manager for the legacy Leanback playback UI.
  *
- * This is a drop-in replacement for [VideoManager] that uses libmpv instead of ExoPlayer.
+ * This is a drop-in replacement for [VideoManager] that uses libmpv.
  * It implements the same public interface used by [PlaybackController].
  *
  * @param activity The activity context
@@ -443,7 +443,7 @@ class MpvVideoManager(
 	 * @param allStreams All available streams from Jellyfin
 	 * @return The stream index, or -1 if not found
 	 */
-	fun getExoPlayerTrack(
+	fun getMediaTrack(
 		streamType: MediaStreamType?,
 		allStreams: List<MediaStream>?,
 	): Int {
@@ -473,7 +473,7 @@ class MpvVideoManager(
 	 * @param allStreams All available streams from Jellyfin (can be null when disabling)
 	 * @return True if successful
 	 */
-	fun setExoPlayerTrack(
+	fun setMediaTrack(
 		index: Int,
 		streamType: MediaStreamType?,
 		allStreams: List<MediaStream>?,
