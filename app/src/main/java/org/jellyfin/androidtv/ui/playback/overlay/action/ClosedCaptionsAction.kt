@@ -9,8 +9,6 @@ import org.jellyfin.androidtv.R
 import org.jellyfin.androidtv.ui.playback.PlaybackController
 import org.jellyfin.androidtv.ui.playback.overlay.CustomPlaybackTransportControlGlue
 import org.jellyfin.androidtv.ui.playback.overlay.VideoPlayerAdapter
-import org.jellyfin.androidtv.ui.playback.setSubtitleIndex
-import org.jellyfin.sdk.model.api.MediaStreamType
 import timber.log.Timber
 
 class ClosedCaptionsAction(
@@ -29,26 +27,31 @@ class ClosedCaptionsAction(
 		context: Context,
 		view: View,
 	) {
-		if (playbackController.currentStreamInfo == null) {
-			Timber.w("StreamInfo null trying to obtain subtitles")
+		val videoManager = playbackController.videoManager
+		if (videoManager == null) {
+			Timber.w("VideoManager null trying to obtain subtitles")
 			Toast.makeText(context, "Unable to obtain subtitle info", Toast.LENGTH_LONG).show()
 			return
 		}
+
+		val trackManager = videoManager.trackManager
+		val mpvTracks = trackManager.tracks.value
+		val selectedSubId = trackManager.selectedSubtitleTrackId.value
 
 		videoPlayerAdapter.leanbackOverlayFragment.setFading(false)
 		removePopup()
 		popup = PopupMenu(context, view, Gravity.END).apply {
 			with(menu) {
 				var order = 0
+				// "None" option to disable subtitles
 				add(0, -1, order++, context.getString(R.string.lbl_none)).apply {
-					isChecked = playbackController.subtitleStreamIndex == -1
+					isChecked = selectedSubId == null
 				}
 
-				for (sub in playbackController.currentMediaSource.mediaStreams.orEmpty()) {
-					if (sub.type != MediaStreamType.SUBTITLE) continue
-
-					add(0, sub.index, order++, sub.displayTitle).apply {
-						isChecked = sub.index == playbackController.subtitleStreamIndex
+				// List all subtitle tracks from mpv
+				for (sub in mpvTracks.subtitleTracks) {
+					add(0, sub.id, order++, sub.displayName).apply {
+						isChecked = sub.id == selectedSubId
 					}
 				}
 
@@ -59,7 +62,14 @@ class ClosedCaptionsAction(
 				popup = null
 			}
 			setOnMenuItemClickListener { item ->
-				playbackController.setSubtitleIndex(item.itemId)
+				val trackId = item.itemId
+				if (trackId == -1) {
+					// Disable subtitles
+					trackManager.selectSubtitleTrack(null)
+				} else {
+					// Select the subtitle track by mpv track ID
+					trackManager.selectSubtitleTrack(trackId)
+				}
 				true
 			}
 		}

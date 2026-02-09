@@ -37,11 +37,14 @@ import org.jellyfin.androidtv.ui.base.LocalTextStyle
 import org.jellyfin.androidtv.ui.base.Text
 import org.jellyfin.androidtv.ui.base.button.IconButton
 import org.jellyfin.androidtv.ui.base.popover.Popover
+import org.jellyfin.androidtv.ui.composable.rememberQueueEntry
 import org.jellyfin.androidtv.ui.composable.rememberPlayerPositionInfo
 import org.jellyfin.androidtv.ui.player.base.PlayerSeekbar
 import org.jellyfin.playback.core.PlaybackManager
 import org.jellyfin.playback.core.model.PlayState
 import org.jellyfin.playback.core.queue.queue
+import org.jellyfin.playback.jellyfin.queue.baseItem
+import org.jellyfin.playback.jellyfin.queue.baseItemFlow
 import org.koin.compose.koinInject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -52,6 +55,24 @@ fun VideoPlayerControls(
 	playbackManager: PlaybackManager = koinInject()
 ) {
 	val playState by playbackManager.state.playState.collectAsState()
+	val entry by rememberQueueEntry(playbackManager)
+	val item = entry?.run { baseItemFlow.collectAsState(baseItem) }?.value
+	val chapterMarkers = remember(item) {
+		val totalTicks = item?.runTimeTicks ?: return@remember emptyList()
+		if (totalTicks <= 0L) return@remember emptyList()
+
+		item.chapters.orEmpty()
+			.mapNotNull { chapter ->
+				val startTicks = chapter.startPositionTicks
+				when {
+					startTicks <= 0L -> null
+					startTicks >= totalTicks -> null
+					else -> (startTicks.toFloat() / totalTicks.toFloat()).coerceIn(0f, 1f)
+				}
+			}
+			.distinct()
+			.sorted()
+	}
 
 	Column(
 		verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Bottom),
@@ -76,6 +97,7 @@ fun VideoPlayerControls(
 
 		PlayerSeekbar(
 			playbackManager = playbackManager,
+			chapterMarkers = chapterMarkers,
 			modifier = Modifier
 				.fillMaxWidth()
 				.height(4.dp)

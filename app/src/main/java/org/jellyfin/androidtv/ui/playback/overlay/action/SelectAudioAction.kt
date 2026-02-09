@@ -4,10 +4,12 @@ import android.content.Context
 import android.view.Gravity
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.Toast
 import org.jellyfin.androidtv.R
 import org.jellyfin.androidtv.ui.playback.PlaybackController
 import org.jellyfin.androidtv.ui.playback.overlay.CustomPlaybackTransportControlGlue
 import org.jellyfin.androidtv.ui.playback.overlay.VideoPlayerAdapter
+import timber.log.Timber
 
 class SelectAudioAction(
 	context: Context,
@@ -25,16 +27,25 @@ class SelectAudioAction(
 		context: Context,
 		view: View,
 	) {
-		videoPlayerAdapter.leanbackOverlayFragment.setFading(false)
-		val audioTracks = playbackController.currentStreamInfo?.selectableAudioStreams ?: return
-		val currentAudioIndex = playbackController.audioStreamIndex
+		val videoManager = playbackController.videoManager
+		if (videoManager == null) {
+			Timber.w("VideoManager null trying to obtain audio tracks")
+			Toast.makeText(context, "Unable to obtain audio track info", Toast.LENGTH_LONG).show()
+			return
+		}
 
+		val trackManager = videoManager.trackManager
+		val mpvTracks = trackManager.tracks.value
+		val selectedAudioId = trackManager.selectedAudioTrackId.value
+
+		videoPlayerAdapter.leanbackOverlayFragment.setFading(false)
 		dismissPopup()
 		popup = PopupMenu(context, view, Gravity.END).apply {
 			with(menu) {
-				for (track in audioTracks) {
-					add(0, track.index, track.index, track.displayTitle).apply {
-						isChecked = currentAudioIndex == track.index
+				var order = 0
+				for (track in mpvTracks.audioTracks) {
+					add(0, track.id, order++, track.displayName).apply {
+						isChecked = track.id == selectedAudioId
 					}
 				}
 				setGroupCheckable(0, true, false)
@@ -45,7 +56,7 @@ class SelectAudioAction(
 				popup = null
 			}
 			setOnMenuItemClickListener { item ->
-				playbackController.switchAudioStream(item.itemId)
+				trackManager.selectAudioTrack(item.itemId)
 				true
 			}
 		}

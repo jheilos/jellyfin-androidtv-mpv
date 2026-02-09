@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -35,6 +36,7 @@ data class SeekbarColors(
 	val bufferColor: Color,
 	val progressColor: Color,
 	val knobColor: Color,
+	val chapterMarkerColor: Color,
 )
 
 object SeekbarDefaults {
@@ -45,11 +47,13 @@ object SeekbarDefaults {
 		bufferColor: Color = JellyfinTheme.colorScheme.seekbarBuffer,
 		progressColor: Color = JellyfinTheme.colorScheme.rangeControlFill,
 		knobColor: Color = JellyfinTheme.colorScheme.rangeControlKnob,
+		chapterMarkerColor: Color = Color(0xFFFF3B30),
 	) = SeekbarColors(
 		backgroundColor = backgroundColor,
 		bufferColor = bufferColor,
 		progressColor = progressColor,
 		knobColor = knobColor,
+		chapterMarkerColor = chapterMarkerColor,
 	)
 }
 
@@ -62,6 +66,7 @@ fun Seekbar(
 	duration: Duration = Duration.ZERO,
 	seekForwardAmount: Duration = duration / 100,
 	seekRewindAmount: Duration = duration / 100,
+	chapterMarkers: List<Duration> = emptyList(),
 	onScrubbing: ((scrubbing: Boolean) -> Unit)? = null,
 	onSeek: ((progress: Duration) -> Unit)? = null,
 	enabled: Boolean = true,
@@ -72,6 +77,9 @@ fun Seekbar(
 	val bufferPercentage = buffer.inWholeMilliseconds.toFloat() / durationMs
 	val seekForwardPercentage = seekForwardAmount.inWholeMilliseconds.toFloat() / durationMs
 	val seekRewindPercentage = seekRewindAmount.inWholeMilliseconds.toFloat() / durationMs
+	val chapterMarkerPercentages = chapterMarkers.map { marker ->
+		(marker.inWholeMilliseconds.toFloat() / durationMs).coerceIn(0f, 1f)
+	}
 
 	Seekbar(
 		modifier = modifier,
@@ -80,6 +88,7 @@ fun Seekbar(
 		buffer = bufferPercentage,
 		seekForwardAmount = seekForwardPercentage,
 		seekRewindAmount = seekRewindPercentage,
+		chapterMarkers = chapterMarkerPercentages,
 		onScrubbing = onScrubbing,
 		onSeek = if (onSeek == null) null else { progress -> onSeek(progress.toDouble() * duration) },
 		enabled = enabled,
@@ -95,6 +104,7 @@ fun Seekbar(
 	buffer: Float = 0f,
 	seekForwardAmount: Float = 0.01f,
 	seekRewindAmount: Float = 0.01f,
+	chapterMarkers: List<Float> = emptyList(),
 	onScrubbing: ((scrubbing: Boolean) -> Unit)? = null,
 	onSeek: ((progress: Float) -> Unit)? = null,
 	enabled: Boolean = true,
@@ -174,6 +184,19 @@ fun Seekbar(
 							width = visibleProgress * size.width,
 						),
 						cornerRadius = barCornerRadius,
+					)
+				}
+
+				// Chapter markers
+				val markerRadius = (size.height * 0.12f).coerceIn(1.5f, 4f)
+				val markerColor = colors.chapterMarkerColor.copy(alpha = 0.95f)
+				chapterMarkers.forEach { marker ->
+					if (marker <= 0f || marker >= 1f) return@forEach
+					val markerX = marker * size.width
+					drawCircle(
+						color = markerColor,
+						radius = markerRadius,
+						center = Offset(markerX, center.y),
 					)
 				}
 

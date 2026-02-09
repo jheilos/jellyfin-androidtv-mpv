@@ -201,6 +201,11 @@ public class PlaybackController implements PlaybackControllerNotifiable {
         return mCurrentStreamInfo;
     }
 
+    @Nullable
+    public MpvVideoManager getVideoManager() {
+        return mVideoManager;
+    }
+
     public boolean canSeek() {
         return !isLiveTv;
     }
@@ -1200,6 +1205,10 @@ public class PlaybackController implements PlaybackControllerNotifiable {
             }
 
             mPlaybackState = PlaybackState.PLAYING;
+            // Update play/pause button state immediately so it reflects "playing"
+            if (mFragment != null) {
+                mFragment.setPlayPauseActionState(0);
+            }
             interactionTracker.notifyStart(getCurrentlyPlayingItem());
             mCurrentTranscodeStartTime = mCurrentStreamInfo.getPlayMethod() == PlayMethod.TRANSCODE ? Instant.now().toEpochMilli() : 0;
             startReportLoop();

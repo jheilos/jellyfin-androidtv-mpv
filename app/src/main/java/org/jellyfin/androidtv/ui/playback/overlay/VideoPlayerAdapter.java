@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.leanback.media.PlayerAdapter;
 
 import org.jellyfin.androidtv.auth.repository.UserRepository;
+import org.jellyfin.androidtv.preference.UserPreferences;
 import org.jellyfin.androidtv.ui.playback.CustomPlaybackOverlayFragment;
 import org.jellyfin.androidtv.ui.playback.PlaybackController;
 import org.jellyfin.androidtv.util.Utils;
 import org.jellyfin.androidtv.util.apiclient.StreamHelper;
+import org.jellyfin.sdk.model.api.BaseItemDto;
 import org.jellyfin.sdk.model.api.ChapterInfo;
 import org.jellyfin.sdk.model.api.MediaSourceInfo;
 import org.koin.java.KoinJavaComponent;
@@ -17,6 +19,7 @@ import java.util.List;
 public class VideoPlayerAdapter extends PlayerAdapter {
 
     private final PlaybackController playbackController;
+    private final UserPreferences userPreferences = KoinJavaComponent.get(UserPreferences.class);
     private CustomPlaybackOverlayFragment customPlaybackOverlayFragment;
     private LeanbackOverlayFragment leanbackOverlayFragment;
 
@@ -55,11 +58,25 @@ public class VideoPlayerAdapter extends PlayerAdapter {
 
     @Override
     public void next() {
+        if (userPreferences.get(UserPreferences.Companion.getSkipButtonsChapterNavigation())) {
+            if (!skipToNextChapter()) {
+                playbackController.next();
+            }
+            return;
+        }
+
         playbackController.next();
     }
 
     @Override
     public void previous() {
+        if (userPreferences.get(UserPreferences.Companion.getSkipButtonsChapterNavigation())) {
+            if (!skipToPreviousChapter()) {
+                playbackController.prev();
+            }
+            return;
+        }
+
         playbackController.prev();
     }
 
@@ -173,8 +190,71 @@ public class VideoPlayerAdapter extends PlayerAdapter {
     }
 
     boolean hasChapters() {
-        org.jellyfin.sdk.model.api.BaseItemDto item = getCurrentlyPlayingItem();
+        BaseItemDto item = getCurrentlyPlayingItem();
         List<ChapterInfo> chapters = item.getChapters();
         return chapters != null && chapters.size() > 0;
+    }
+
+    boolean skipToNextChapter() {
+        if (isLiveTv() || !canSeek()) return false;
+
+        BaseItemDto item = getCurrentlyPlayingItem();
+        List<ChapterInfo> chapters = item == null ? null : item.getChapters();
+        if (chapters == null || chapters.isEmpty()) return false;
+
+        long currentMs = Math.max(0L, getCurrentPosition());
+        long currentTicks = currentMs * 10000L;
+        long epsilonTicks = 250L * 10000L; // 250 ms tolerance at chapter boundaries
+
+        Long targetMs = null;
+        for (ChapterInfo chapter : chapters) {
+            if (chapter == null) continue;
+            Long startTicks = chapter.getStartPositionTicks();
+            if (startTicks == null) continue;
+
+            if (startTicks > currentTicks + epsilonTicks) {
+                targetMs = startTicks / 10000L;
+                break;
+            }
+        }
+
+        if (targetMs == null) return false;
+        seekTo(Math.max(0L, targetMs));
+        return true;
+    }
+
+    boolean skipToPreviousChapter() {
+        if (isLiveTv() || !canSeek()) return false;
+
+        BaseItemDto item = getCurrentlyPlayingItem();
+        List<ChapterInfo> chapters = item == null ? null : item.getChapters();
+        if (chapters == null || chapters.isEmpty()) return false;
+
+        long currentMs = Math.max(0L, getCurrentPosition());
+        long currentTicks = currentMs * 10000L;
+        long epsilonTicks = 250L * 10000L; // 250 ms tolerance at chapter boundaries
+
+        Long targetMs = null;
+        for (int i = chapters.size() - 1; i >= 0; i--) {
+            ChapterInfo chapter = chapters.get(i);
+            if (chapter == null) continue;
+            Long startTicks = chapter.getStartPositionTicks();
+            if (startTicks == null) continue;
+
+            // Strictly before current position (with tolerance), so pressing back exactly
+            // on a chapter start jumps to the chapter before it.
+            if (startTicks < currentTicks - epsilonTicks) {
+                targetMs = startTicks / 10000L;
+                break;
+            }
+        }
+
+        if (targetMs == null) {
+            seekTo(0L);
+            return true;
+        }
+
+        seekTo(Math.max(0L, targetMs));
+        return true;
     }
 }

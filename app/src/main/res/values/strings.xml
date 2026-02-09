@@ -291,6 +291,8 @@
     <string name="just_one">Just this one</string>
     <string name="lbl_sign_in">Please sign in</string>
     <string name="lbl_playback_control_ends">Ends at %1$s</string>
+    <string name="lbl_playback_control_clock_range">%1$s [%2$s]</string>
+    <string name="lbl_playback_control_chapter">Chapter %1$02d / %2$02d</string>
     <string name="watch_count_overflow">99+</string>
     <string name="pref_clock_display">Show clock</string>
     <string name="lbl_always">Always</string>
@@ -521,6 +523,10 @@
     <string name="prefer_exoplayer_ffmpeg_content">Use FFmpeg to decode audio, even if platform codecs are available.</string>
     <string name="default_video_zoom">Default zoom mode</string>
     <string name="video_start_delay">Video start delay</string>
+    <string name="video_auto_play">Auto-start playback</string>
+    <string name="skip_buttons_behavior">Skip buttons behavior</string>
+    <string name="skip_buttons_behavior_chapters">Skip next/previous chapter</string>
+    <string name="skip_buttons_behavior_queue">Skip next/previous episode</string>
     <string name="pref_mediasegment_actions">Media segment actions</string>
     <string name="segment_action_ask_to_skip">Ask to skip</string>
     <string name="segment_action_nothing">Do nothing</string>

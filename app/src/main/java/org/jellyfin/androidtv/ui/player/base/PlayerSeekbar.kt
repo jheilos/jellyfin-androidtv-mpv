@@ -19,6 +19,7 @@ import kotlin.time.times
 fun PlayerSeekbar(
 	modifier: Modifier = Modifier,
 	colors: SeekbarColors = SeekbarDefaults.colors(),
+	chapterMarkers: List<Float> = emptyList(),
 	playbackManager: PlaybackManager = koinInject<PlaybackManager>(),
 ) {
 	val playState by playbackManager.state.playState.collectAsState()
@@ -35,6 +36,9 @@ fun PlayerSeekbar(
 		progress = progress.toDouble() * positionInfo.duration,
 		buffer = positionInfo.buffer,
 		duration = positionInfo.duration,
+		chapterMarkers = chapterMarkers.map { marker ->
+			(marker.coerceIn(0f, 1f).toDouble() * positionInfo.duration)
+		},
 		seekForwardAmount = seekForwardAmount,
 		seekRewindAmount = seekRewindAmount,
 		onScrubbing = { scrubbing -> playbackManager.state.setScrubbing(scrubbing) },

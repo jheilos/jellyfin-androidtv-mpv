@@ -168,6 +168,34 @@ fun SettingsPlaybackAdvancedScreen() {
 		}
 
 		item {
+			var videoAutoPlay by rememberPreference(userPreferences, UserPreferences.videoAutoPlay)
+
+			ListButton(
+				headingContent = { Text(stringResource(R.string.video_auto_play)) },
+				trailingContent = { Checkbox(checked = videoAutoPlay) },
+				onClick = { videoAutoPlay = !videoAutoPlay }
+			)
+		}
+
+		item {
+			var skipButtonsChapterNavigation by rememberPreference(userPreferences, UserPreferences.skipButtonsChapterNavigation)
+
+			ListButton(
+				headingContent = { Text(stringResource(R.string.skip_buttons_behavior)) },
+				captionContent = {
+					Text(
+						stringResource(
+							if (skipButtonsChapterNavigation) R.string.skip_buttons_behavior_chapters
+							else R.string.skip_buttons_behavior_queue
+						)
+					)
+				},
+				trailingContent = { Checkbox(checked = skipButtonsChapterNavigation) },
+				onClick = { skipButtonsChapterNavigation = !skipButtonsChapterNavigation }
+			)
+		}
+
+		item {
 			var playerZoomMode by rememberPreference(userPreferences, UserPreferences.playerZoomMode)
 
 			ListButton(

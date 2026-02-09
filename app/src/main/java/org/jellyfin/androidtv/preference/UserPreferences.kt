@@ -211,6 +211,11 @@ class UserPreferences(context: Context) : SharedPreferenceStore(
 		var videoAutoPlay = booleanPreference("video_auto_play", true)
 
 		/**
+		 * Skip buttons jump between chapters instead of previous/next queue items.
+		 */
+		var skipButtonsChapterNavigation = booleanPreference("skip_buttons_chapter_navigation", true)
+
+		/**
 		 * The actions to take for each media segment type. Managed by the [MediaSegmentRepository].
 		 */
 		var mediaSegmentActions = stringPreference(

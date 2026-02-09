@@ -50,7 +50,7 @@ class MpvVideoManager(
 	private var currentVideoPath: String? = null
 
 	// Track manager for audio/subtitle selection
-	private val trackManager = MpvTrackManager()
+	val trackManager = MpvTrackManager()
 
 	// Playback state
 	private var metaDuration: Long = -1
