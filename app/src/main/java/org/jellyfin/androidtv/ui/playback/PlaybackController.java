@@ -1198,7 +1198,9 @@ public class PlaybackController implements PlaybackControllerNotifiable {
 
     @Override
     public void onPrepared() {
-        if (mPlaybackState == PlaybackState.BUFFERING) {
+        boolean preparedFromBuffering = mPlaybackState == PlaybackState.BUFFERING;
+
+        if (preparedFromBuffering) {
             if (mFragment != null) {
                 mFragment.setFadingEnabled(true);
                 mFragment.leanbackOverlayFragment.setShouldShowOverlay(false);
@@ -1218,38 +1220,45 @@ public class PlaybackController implements PlaybackControllerNotifiable {
 
         if (mPlaybackState == PlaybackState.PAUSED) {
             mPlaybackState = PlaybackState.PLAYING;
+            return;
+        }
+
+        // mpv can emit prepared events on resume/restart transitions; only (re)apply tracks
+        // when this prepared event originates from initial buffering/start.
+        if (!preparedFromBuffering) {
+            return;
+        }
+
+        if (!burningSubs) {
+            // Preserve subtitle state when we know the requested Jellyfin subtitle index.
+            // If the index is unknown (null), do not force-disable subtitles.
+            Integer currentSubtitleIndex = mCurrentOptions.getSubtitleStreamIndex();
+            if (currentSubtitleIndex != null) {
+                PlaybackControllerHelperKt.setSubtitleIndex(this, currentSubtitleIndex, true);
+            } else {
+                Timber.d("Skipping subtitle re-apply because subtitle stream index is unknown");
+            }
         } else {
-            if (!burningSubs) {
-                // Preserve subtitle state when we know the requested Jellyfin subtitle index.
-                // If the index is unknown (null), do not force-disable subtitles.
-                Integer currentSubtitleIndex = mCurrentOptions.getSubtitleStreamIndex();
-                if (currentSubtitleIndex != null) {
-                    PlaybackControllerHelperKt.setSubtitleIndex(this, currentSubtitleIndex, true);
-                } else {
-                    Timber.d("Skipping subtitle re-apply because subtitle stream index is unknown");
-                }
-            } else {
-                PlaybackControllerHelperKt.disableDefaultSubtitles(this);
-            }
+            PlaybackControllerHelperKt.disableDefaultSubtitles(this);
+        }
 
-            // select an audio track
-            int eligibleAudioTrack = mDefaultAudioIndex;
+        // select an audio track
+        int eligibleAudioTrack = mDefaultAudioIndex;
 
-            // if track switching is done without rebuilding the stream, mCurrentOptions is updated
-            // otherwise, use the server default
-            if (mCurrentOptions.getAudioStreamIndex() != null) {
-                eligibleAudioTrack = mCurrentOptions.getAudioStreamIndex();
-            } else if (getCurrentMediaSource().getDefaultAudioStreamIndex() != null) {
-                eligibleAudioTrack = getCurrentMediaSource().getDefaultAudioStreamIndex();
-            }
-            if (!isTranscoding() && getAudioStreamIndex() == -1) {
-                // Track list can arrive shortly after onPrepared for mpv direct play.
-                // Retry once asynchronously instead of forcing an immediate rebuild.
-                final int delayedAudioTrack = eligibleAudioTrack;
-                mHandler.postDelayed(() -> switchAudioStream(delayedAudioTrack), 500);
-            } else {
-                switchAudioStream(eligibleAudioTrack);
-            }
+        // if track switching is done without rebuilding the stream, mCurrentOptions is updated
+        // otherwise, use the server default
+        if (mCurrentOptions.getAudioStreamIndex() != null) {
+            eligibleAudioTrack = mCurrentOptions.getAudioStreamIndex();
+        } else if (getCurrentMediaSource().getDefaultAudioStreamIndex() != null) {
+            eligibleAudioTrack = getCurrentMediaSource().getDefaultAudioStreamIndex();
+        }
+        if (!isTranscoding() && getAudioStreamIndex() == -1) {
+            // Track list can arrive shortly after onPrepared for mpv direct play.
+            // Retry once asynchronously instead of forcing an immediate rebuild.
+            final int delayedAudioTrack = eligibleAudioTrack;
+            mHandler.postDelayed(() -> switchAudioStream(delayedAudioTrack), 500);
+        } else {
+            switchAudioStream(eligibleAudioTrack);
         }
     }
 
