@@ -206,6 +206,11 @@ class UserPreferences(context: Context) : SharedPreferenceStore(
 		var videoStartDelay = longPreference("video_start_delay", 0)
 
 		/**
+		 * Automatically start video playback when opening the player.
+		 */
+		var videoAutoPlay = booleanPreference("video_auto_play", true)
+
+		/**
 		 * The actions to take for each media segment type. Managed by the [MediaSegmentRepository].
 		 */
 		var mediaSegmentActions = stringPreference(

@@ -25,11 +25,10 @@
 
         </FrameLayout>
 
-        <androidx.media3.ui.PlayerView
-            android:id="@+id/exoPlayerView"
+        <SurfaceView
+            android:id="@+id/playerSurfaceView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:use_controller="false" />
+            android:layout_height="match_parent" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/leanback_fragment"

@@ -4,8 +4,10 @@ import android.media.audiofx.AudioEffect
 import android.media.audiofx.DynamicsProcessing
 import android.media.audiofx.Equalizer
 import android.os.Build
+import androidx.annotation.OptIn
 import androidx.core.net.toUri
-import org.jellyfin.playback.media3.exoplayer.mapping.getFfmpegSubtitleMimeType
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.util.UnstableApi
 import org.jellyfin.sdk.model.api.MediaStream
 import timber.log.Timber
 
@@ -15,12 +17,35 @@ import timber.log.Timber
  */
 fun getSubtitleMediaStreamCodec(stream: MediaStream): String {
 	val codec = requireNotNull(stream.codec)
-	val codecMediaType = getFfmpegSubtitleMimeType(codec, "").ifBlank { null }
+	val codecMediaType = getSubtitleMimeType(codec, "").ifBlank { null }
 
 	val urlSubtitleExtension = stream.deliveryUrl?.toUri()?.lastPathSegment?.split('.')?.last()
-	val urlExtensionMediaType = urlSubtitleExtension?.let { getFfmpegSubtitleMimeType(it, "") }?.ifBlank { null }
+	val urlExtensionMediaType = urlSubtitleExtension?.let { getSubtitleMimeType(it, "") }?.ifBlank { null }
 
 	return urlExtensionMediaType ?: codecMediaType ?: urlSubtitleExtension ?: codec
+}
+
+private val ffmpegSubtitleMimeTypes = mapOf(
+	"mp4" to MimeTypes.VIDEO_MP4,
+	"ass" to MimeTypes.TEXT_SSA,
+	"dvbsub" to MimeTypes.APPLICATION_DVBSUBS,
+	"idx" to MimeTypes.APPLICATION_VOBSUB,
+	"pgs" to MimeTypes.APPLICATION_PGS,
+	"pgssub" to MimeTypes.APPLICATION_PGS,
+	"srt" to MimeTypes.APPLICATION_SUBRIP,
+	"ssa" to MimeTypes.TEXT_SSA,
+	"subrip" to MimeTypes.APPLICATION_SUBRIP,
+	"vtt" to MimeTypes.TEXT_VTT,
+	"ttml" to MimeTypes.APPLICATION_TTML,
+	"webvtt" to MimeTypes.TEXT_VTT,
+)
+
+@OptIn(UnstableApi::class)
+private fun getSubtitleMimeType(codec: String, fallback: String = codec): String {
+	val normalized = codec.lowercase()
+	return ffmpegSubtitleMimeTypes[normalized]
+		?: MimeTypes.getTextMediaMimeType(normalized)
+		?: fallback
 }
 
 private var audioEffect: AudioEffect? = null

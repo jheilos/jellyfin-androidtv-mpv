@@ -7,8 +7,6 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.media3.datasource.HttpDataSource
-import androidx.media3.datasource.okhttp.OkHttpDataSource
 import org.jellyfin.androidtv.R
 import org.jellyfin.androidtv.preference.UserPreferences
 import org.jellyfin.androidtv.preference.UserSettingPreferences
@@ -20,14 +18,11 @@ import org.jellyfin.androidtv.ui.playback.rewrite.RewriteMediaManager
 import org.jellyfin.androidtv.util.profile.createDeviceProfile
 import org.jellyfin.playback.core.playbackManager
 import org.jellyfin.playback.jellyfin.jellyfinPlugin
-import org.jellyfin.playback.media3.exoplayer.ExoPlayerOptions
-import org.jellyfin.playback.media3.exoplayer.exoPlayerPlugin
 import org.jellyfin.playback.media3.session.MediaSessionOptions
 import org.jellyfin.playback.media3.session.media3SessionPlugin
-import org.jellyfin.sdk.api.client.HttpClientOptions
-import org.jellyfin.sdk.api.okhttp.OkHttpFactory
+import org.jellyfin.playback.mpv.MpvPlayerOptions
+import org.jellyfin.playback.mpv.mpvPlayerPlugin
 import org.koin.android.ext.koin.androidContext
-import kotlin.time.Duration
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
 import kotlin.time.Duration.Companion.milliseconds
@@ -39,16 +34,6 @@ val playbackModule = module {
 	single<MediaManager> { RewriteMediaManager(get(), get()) }
 
 	single { PlaybackLauncher(get(), get(), get(), get()) }
-
-	single<HttpDataSource.Factory> {
-		val okHttpFactory = get<OkHttpFactory>()
-		val httpClientOptions = get<HttpClientOptions>().copy(
-			// Disable request timeout for media playback as this causes issues with Live TV
-			requestTimeout = Duration.ZERO
-		)
-
-		OkHttpDataSource.Factory(okHttpFactory.createClient(httpClientOptions))
-	}
 
 	single { createPlaybackManager() }
 }
@@ -69,12 +54,10 @@ fun Scope.createPlaybackManager() = playbackManager(androidContext()) {
 	}
 
 	val userPreferences = get<UserPreferences>()
-	val exoPlayerOptions = ExoPlayerOptions(
-		preferFfmpeg = userPreferences[UserPreferences.preferExoPlayerFfmpeg],
+	val mpvPlayerOptions = MpvPlayerOptions(
 		enableDebugLogging = userPreferences[UserPreferences.debuggingEnabled],
-		baseDataSourceFactory = get<HttpDataSource.Factory>(),
 	)
-	install(exoPlayerPlugin(get(), exoPlayerOptions))
+	install(mpvPlayerPlugin(get(), mpvPlayerOptions))
 
 	val mediaSessionOptions = MediaSessionOptions(
 		channelId = notificationChannelId,

@@ -221,7 +221,7 @@ public class CustomPlaybackOverlayFragment extends Fragment implements LiveTvGui
         PlaybackController playbackController = playbackControllerContainer.getValue().getPlaybackController();
 
         if (playbackController != null) {
-            playbackController.init(new VideoManager(requireActivity(), view, helper), this);
+            playbackController.init(new MpvVideoManager(requireActivity(), view, helper), this);
         }
     }
 

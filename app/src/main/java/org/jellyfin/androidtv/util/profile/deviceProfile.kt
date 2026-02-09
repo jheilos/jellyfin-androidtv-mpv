@@ -64,7 +64,7 @@ private val hlsFmp4AudioCodecs = arrayOf(
 	Codec.Audio.TRUEHD
 )
 
-private fun UserPreferences.getMaxBitrate(): Int {
+internal fun UserPreferences.getMaxBitrate(): Int {
 	var maxBitrate = this[UserPreferences.maxBitrate].toFloatOrNull()
 
 	// The value "0" was used in an older release, make sure we prevent that from being used to avoid video not playing
@@ -72,6 +72,125 @@ private fun UserPreferences.getMaxBitrate(): Int {
 
 	// Convert megabit to bit
 	return (maxBitrate * 1_000_000).roundToInt()
+}
+
+fun createMpvDeviceProfile(
+	userPreferences: UserPreferences,
+) = buildDeviceProfile {
+	name = "AndroidTV-mpv"
+
+	// Bitrate limits (keep user preference)
+	maxStaticBitrate = userPreferences.getMaxBitrate()
+	maxStreamingBitrate = userPreferences.getMaxBitrate()
+
+	// --- Direct Play Profiles ---
+	// mpv can play everything, so list all common containers/codecs
+	directPlayProfile {
+		type = DlnaProfileType.VIDEO
+		container(
+			Codec.Container.ASF,
+			Codec.Container.AVI,
+			Codec.Container.HLS,
+			Codec.Container.M4V,
+			Codec.Container.MKV,
+			Codec.Container.MOV,
+			Codec.Container.MP4,
+			Codec.Container.MPEGTS,
+			Codec.Container.OGM,
+			Codec.Container.OGV,
+			Codec.Container.TS,
+			Codec.Container.VOB,
+			Codec.Container.WEBM,
+			Codec.Container.WMV,
+			Codec.Container.XVID,
+		)
+		videoCodec(
+			Codec.Video.AV1,
+			Codec.Video.H264,
+			Codec.Video.HEVC,
+			Codec.Video.MPEG,
+			Codec.Video.MPEG2VIDEO,
+			Codec.Video.VC1,
+			Codec.Video.VP8,
+			Codec.Video.VP9,
+		)
+		audioCodec(*supportedAudioCodecs)
+	}
+
+	directPlayProfile {
+		type = DlnaProfileType.AUDIO
+		audioCodec(*supportedAudioCodecs)
+	}
+
+	// --- Transcoding Profiles (fallback, shouldn't normally be used) ---
+	transcodingProfile {
+		type = DlnaProfileType.VIDEO
+		context = EncodingContext.STREAMING
+		container = Codec.Container.TS
+		protocol = MediaStreamProtocol.HLS
+		videoCodec(Codec.Video.HEVC, Codec.Video.H264)
+		audioCodec(Codec.Audio.AAC, Codec.Audio.AC3, Codec.Audio.EAC3, Codec.Audio.MP3)
+		copyTimestamps = false
+		enableSubtitlesInManifest = true
+	}
+
+	transcodingProfile {
+		type = DlnaProfileType.AUDIO
+		context = EncodingContext.STREAMING
+		container = Codec.Container.TS
+		protocol = MediaStreamProtocol.HLS
+		audioCodec(Codec.Audio.AAC)
+	}
+
+	// --- Codec Profiles ---
+	// Very permissive — no restrictive level/profile/resolution conditions
+
+	// H.264: Accept all profiles up to very high levels
+	codecProfile {
+		type = CodecType.VIDEO
+		codec = Codec.Video.H264
+		conditions {
+			ProfileConditionValue.VIDEO_LEVEL lowerThanOrEquals 300
+		}
+	}
+
+	// HEVC: Accept all profiles up to very high levels
+	codecProfile {
+		type = CodecType.VIDEO
+		codec = Codec.Video.HEVC
+		conditions {
+			ProfileConditionValue.VIDEO_LEVEL lowerThanOrEquals 300
+		}
+	}
+
+	// Audio channels: 8 channels max (mpv handles downmixing)
+	codecProfile {
+		type = CodecType.VIDEO_AUDIO
+		conditions {
+			ProfileConditionValue.AUDIO_CHANNELS lowerThanOrEquals 8
+		}
+	}
+
+	// --- Subtitle Profiles ---
+	// mpv can render ALL subtitle types client-side (never burn in)
+
+	// Text subtitles: embed + external delivery
+	subtitleProfile(Codec.Subtitle.VTT, embedded = true, hls = true, external = true)
+	subtitleProfile(Codec.Subtitle.WEBVTT, embedded = true, hls = true, external = true)
+	subtitleProfile(Codec.Subtitle.SRT, embedded = true, external = true)
+	subtitleProfile(Codec.Subtitle.SUBRIP, embedded = true, external = true)
+	subtitleProfile(Codec.Subtitle.TTML, embedded = true, external = true)
+
+	// ASS/SSA: mpv has libass built in
+	subtitleProfile(Codec.Subtitle.ASS, embedded = true, external = true)
+	subtitleProfile(Codec.Subtitle.SSA, embedded = true, external = true)
+
+	// Image subtitles: mpv renders as overlay (no burn-in needed)
+	subtitleProfile(Codec.Subtitle.DVBSUB, embedded = true)
+	subtitleProfile(Codec.Subtitle.DVDSUB, embedded = true)
+	subtitleProfile(Codec.Subtitle.IDX, embedded = true)
+	subtitleProfile(Codec.Subtitle.PGS, embedded = true)
+	subtitleProfile(Codec.Subtitle.PGSSUB, embedded = true)
 }
 
 fun createDeviceProfile(

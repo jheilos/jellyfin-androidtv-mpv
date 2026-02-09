@@ -9,8 +9,8 @@ include(":app")
 include(":design")
 include(":playback:core")
 include(":playback:jellyfin")
-include(":playback:media3:exoplayer")
 include(":playback:media3:session")
+include(":playback:mpv")
 include(":preference")
 
 pluginManagement {

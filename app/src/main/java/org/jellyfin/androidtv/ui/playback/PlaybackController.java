@@ -69,7 +69,7 @@ public class PlaybackController implements PlaybackControllerNotifiable {
     private final Lazy<InteractionTrackerViewModel> lazyInteractionTracker = inject(InteractionTrackerViewModel.class);
 
     List<BaseItemDto> mItems;
-    VideoManager mVideoManager;
+    MpvVideoManager mVideoManager;
     int mCurrentIndex;
     protected long mCurrentPosition = 0;
     private PlaybackState mPlaybackState = PlaybackState.IDLE;
@@ -137,7 +137,7 @@ public class PlaybackController implements PlaybackControllerNotifiable {
         return mFragment;
     }
 
-    public void init(@NonNull VideoManager mgr, @NonNull CustomPlaybackOverlayFragment fragment) {
+    public void init(@NonNull MpvVideoManager mgr, @NonNull CustomPlaybackOverlayFragment fragment) {
         mVideoManager = mgr;
         mVideoManager.subscribe(this);
         mVideoManager.setZoom(userPreferences.getValue().get(UserPreferences.Companion.getPlayerZoomMode()));
@@ -417,7 +417,14 @@ public class PlaybackController implements PlaybackControllerNotifiable {
                 startReportLoop();
                 break;
             case BUFFERING:
-                // onPrepared should take care of it
+                // onPrepared usually handles this, but if autoplay is disabled playback can
+                // remain in BUFFERING until user explicitly presses play.
+                if (!userPreferences.getValue().get(UserPreferences.Companion.getVideoAutoPlay()) && hasInitializedVideoManager()) {
+                    mVideoManager.play();
+                    mPlaybackState = PlaybackState.PLAYING;
+                    mFragment.setFadingEnabled(true);
+                    startReportLoop();
+                }
                 break;
             case IDLE:
                 // start new playback
@@ -524,10 +531,8 @@ public class PlaybackController implements PlaybackControllerNotifiable {
         if (!isLiveTv && currentMediaSource != null) {
             internalOptions.setMediaSourceId(currentMediaSource.getId());
         }
-        DeviceProfile internalProfile = DeviceProfileKt.createDeviceProfile(
-                mFragment.getContext(),
-                userPreferences.getValue(),
-                get(ServerVersion.class)
+        DeviceProfile internalProfile = DeviceProfileKt.createMpvDeviceProfile(
+                userPreferences.getValue()
         );
         internalOptions.setProfile(internalProfile);
         return internalOptions;
@@ -649,19 +654,21 @@ public class PlaybackController implements PlaybackControllerNotifiable {
         }
 
         PlaybackControllerHelperKt.applyMediaSegments(this, item, () -> {
-            // Set video start delay
-            long videoStartDelay = userPreferences.getValue().get(UserPreferences.Companion.getVideoStartDelay());
-            if (videoStartDelay > 0) {
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mVideoManager != null) {
-                            mVideoManager.start();
+            if (userPreferences.getValue().get(UserPreferences.Companion.getVideoAutoPlay())) {
+                // Set video start delay
+                long videoStartDelay = userPreferences.getValue().get(UserPreferences.Companion.getVideoStartDelay());
+                if (videoStartDelay > 0) {
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mVideoManager != null) {
+                                mVideoManager.start();
+                            }
                         }
-                    }
-                }, videoStartDelay);
-            } else {
-                mVideoManager.start();
+                    }, videoStartDelay);
+                } else {
+                    mVideoManager.start();
+                }
             }
 
             dataRefreshService.getValue().setLastPlayedItem(item);
@@ -788,13 +795,17 @@ public class PlaybackController implements PlaybackControllerNotifiable {
         if (!isTranscoding() && mVideoManager.setExoPlayerTrack(index, MediaStreamType.AUDIO, currentMediaSource.getMediaStreams())) {
             mCurrentOptions.setMediaSourceId(currentMediaSource.getId());
             mCurrentOptions.setAudioStreamIndex(index);
-        } else {
+        } else if (isTranscoding()) {
             startSpinner();
             mCurrentOptions.setMediaSourceId(currentMediaSource.getId());
             mCurrentOptions.setAudioStreamIndex(index);
             stop();
             playInternal(getCurrentlyPlayingItem(), mCurrentPosition, mCurrentOptions);
             mPlaybackState = PlaybackState.BUFFERING;
+        } else {
+            // mpv track metadata may not be fully ready on initial startup.
+            // Avoid tearing down direct-play playback if a direct track switch cannot be mapped yet.
+            Timber.w("Unable to switch direct-play audio stream to %s right now; keeping current track", index);
         }
     }
 
@@ -1200,10 +1211,14 @@ public class PlaybackController implements PlaybackControllerNotifiable {
             mPlaybackState = PlaybackState.PLAYING;
         } else {
             if (!burningSubs) {
-                // Make sure the requested subtitles are enabled when external/embedded
+                // Preserve subtitle state when we know the requested Jellyfin subtitle index.
+                // If the index is unknown (null), do not force-disable subtitles.
                 Integer currentSubtitleIndex = mCurrentOptions.getSubtitleStreamIndex();
-                if (currentSubtitleIndex == null) currentSubtitleIndex = -1;
-                PlaybackControllerHelperKt.setSubtitleIndex(this, currentSubtitleIndex, true);
+                if (currentSubtitleIndex != null) {
+                    PlaybackControllerHelperKt.setSubtitleIndex(this, currentSubtitleIndex, true);
+                } else {
+                    Timber.d("Skipping subtitle re-apply because subtitle stream index is unknown");
+                }
             } else {
                 PlaybackControllerHelperKt.disableDefaultSubtitles(this);
             }
@@ -1218,7 +1233,14 @@ public class PlaybackController implements PlaybackControllerNotifiable {
             } else if (getCurrentMediaSource().getDefaultAudioStreamIndex() != null) {
                 eligibleAudioTrack = getCurrentMediaSource().getDefaultAudioStreamIndex();
             }
-            switchAudioStream(eligibleAudioTrack);
+            if (!isTranscoding() && getAudioStreamIndex() == -1) {
+                // Track list can arrive shortly after onPrepared for mpv direct play.
+                // Retry once asynchronously instead of forcing an immediate rebuild.
+                final int delayedAudioTrack = eligibleAudioTrack;
+                mHandler.postDelayed(() -> switchAudioStream(delayedAudioTrack), 500);
+            } else {
+                switchAudioStream(eligibleAudioTrack);
+            }
         }
     }
 

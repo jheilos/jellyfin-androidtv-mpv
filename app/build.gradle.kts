@@ -17,6 +17,10 @@ android {
 		applicationId = namespace
 		versionName = project.getVersionName()
 		versionCode = getVersionCode(versionName!!)
+
+		ndk {
+			abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+		}
 	}
 
 	buildFeatures {
@@ -90,8 +94,8 @@ dependencies {
 	implementation(projects.design)
 	implementation(projects.playback.core)
 	implementation(projects.playback.jellyfin)
-	implementation(projects.playback.media3.exoplayer)
 	implementation(projects.playback.media3.session)
+	implementation(projects.playback.mpv)
 	implementation(projects.preference)
 	implementation(libs.jellyfin.sdk) {
 		// Change version if desired
@@ -126,18 +130,14 @@ dependencies {
 	implementation(libs.androidx.window)
 	implementation(libs.androidx.cardview)
 	implementation(libs.androidx.startup)
+	implementation("androidx.media3:media3-common:${libs.versions.androidx.media3.get()}")
+	implementation("androidx.media3:media3-ui:${libs.versions.androidx.media3.get()}")
 	implementation(libs.bundles.androidx.compose)
 	implementation(libs.accompanist.permissions)
 
 	// Dependency Injection
 	implementation(libs.bundles.koin)
 
-	// Media players
-	implementation(libs.androidx.media3.exoplayer)
-	implementation(libs.androidx.media3.datasource.okhttp)
-	implementation(libs.androidx.media3.exoplayer.hls)
-	implementation(libs.androidx.media3.ui)
-	implementation(libs.jellyfin.androidx.media3.ffmpeg.decoder)
 
 	// Markdown
 	implementation(libs.bundles.markwon)

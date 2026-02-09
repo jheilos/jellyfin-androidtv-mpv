@@ -1,10 +1,8 @@
 package org.jellyfin.androidtv.ui.playback
 
-import androidx.annotation.OptIn
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.common.C
-import androidx.media3.common.TrackSelectionOverride
-import androidx.media3.common.util.UnstableApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,19 +37,20 @@ fun PlaybackController.getLiveTvChannel(
 	}
 }
 
-@OptIn(UnstableApi::class)
+/**
+ * Disable subtitle display for mpv player.
+ */
 fun PlaybackController.disableDefaultSubtitles() {
 	Timber.i("Disabling non-baked subtitles")
-
-	with(mVideoManager.mExoPlayer.trackSelector!!) {
-		parameters = parameters.buildUpon()
-			.clearOverridesOfType(C.TRACK_TYPE_TEXT)
-			.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
-			.build()
-	}
+	mVideoManager.setExoPlayerTrack(-1, MediaStreamType.SUBTITLE, null)
 }
 
-@OptIn(UnstableApi::class)
+/**
+ * Set the subtitle track index for mpv player.
+ *
+ * @param index The Jellyfin stream index to select, or -1 to disable subtitles
+ * @param force If true, apply the change even if the index hasn't changed
+ */
 @JvmOverloads
 fun PlaybackController.setSubtitleIndex(index: Int, force: Boolean = false) {
 	Timber.i("Switching subtitles from index ${mCurrentOptions.subtitleStreamIndex} to $index")
@@ -102,46 +101,20 @@ fun PlaybackController.setSubtitleIndex(index: Int, force: Boolean = false) {
 			SubtitleDeliveryMethod.EXTERNAL,
 			SubtitleDeliveryMethod.EMBED,
 			SubtitleDeliveryMethod.HLS -> {
-				// External subtitles need to be resolved differently
-				val group = if (stream.deliveryMethod == SubtitleDeliveryMethod.EXTERNAL) {
-					mVideoManager.mExoPlayer.currentTracks.groups.firstOrNull { group ->
-						// Verify this is a group with a single format (the subtitles) that is added by us. Because ExoPlayer uses a
-						// MergingMediaSource, each external subtitle format id is prefixed with its source index (normally starting at 1,
-						// increasing for each external subttitle). So we only check the end of the id
-						group.length == 1 && group.getTrackFormat(0).id?.endsWith(":JF_EXTERNAL:$index") == true
-					}
-				} else {
-					// The server does not send a reliable index in all cases, so calculate it manually
-					val localIndex = mediaSource.mediaStreams.orEmpty()
-						.filter { it.type == MediaStreamType.SUBTITLE }
-						.filter { it.deliveryMethod == SubtitleDeliveryMethod.EMBED || it.deliveryMethod == SubtitleDeliveryMethod.HLS }
-						.indexOf(stream)
-						.takeIf { it != -1 }
-
-					if (localIndex == null) {
-						Timber.w("Failed to find local subtitle index")
-						return setSubtitleIndex(-1)
-					}
-
-					mVideoManager.mExoPlayer.currentTracks.groups
-						.filter { it.type == C.TRACK_TYPE_TEXT }
-						.filterNot { it.length == 1 && it.getTrackFormat(0).id?.endsWith(":JF_EXTERNAL:$index") == true }
-						.getOrNull(localIndex)
-				}?.mediaTrackGroup
-
-				if (group == null) {
-					Timber.w("Failed to find correct subtitle group for method ${stream.deliveryMethod}")
-					return setSubtitleIndex(-1)
-				}
-
-				Timber.i("Enabling subtitle group $index via method ${stream.deliveryMethod}")
+				// For mpv, use the track manager to select subtitles
+				// mpv handles both embedded and external subtitles through its unified track system
+				Timber.i("Enabling subtitle track $index via method ${stream.deliveryMethod}")
 				mCurrentOptions.subtitleStreamIndex = index
-				with(mVideoManager.mExoPlayer.trackSelector!!) {
-					parameters = parameters.buildUpon()
-						.clearOverridesOfType(C.TRACK_TYPE_TEXT)
-						.addOverride(TrackSelectionOverride(group, 0))
-						.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
-						.build()
+
+				// Use setExoPlayerTrack which maps Jellyfin indices to mpv track IDs
+				val success = mVideoManager.setExoPlayerTrack(
+					index,
+					MediaStreamType.SUBTITLE,
+					currentlyPlayingItem.mediaStreams
+				)
+
+				if (!success) {
+					Timber.w("Failed to set subtitle track for index $index")
 				}
 			}
 
@@ -153,6 +126,26 @@ fun PlaybackController.setSubtitleIndex(index: Int, force: Boolean = false) {
 	}
 }
 
+/**
+ * Data class to hold media segment action information for mpv position monitoring.
+ */
+private data class MediaSegmentActionData(
+	val segment: MediaSegmentDto,
+	val action: MediaSegmentAction,
+	var triggered: Boolean = false,
+)
+
+/**
+ * Storage for pending media segment actions.
+ */
+private val pendingMediaSegments = mutableListOf<MediaSegmentActionData>()
+private var mediaSegmentHandler: Handler? = null
+private var mediaSegmentRunnable: Runnable? = null
+
+/**
+ * Apply media segments for the current item.
+ * For mpv, we use a position-monitoring approach since we don't have ExoPlayer's message system.
+ */
 fun PlaybackController.applyMediaSegments(
 	item: BaseItemDto,
 	callback: () -> Unit,
@@ -160,50 +153,91 @@ fun PlaybackController.applyMediaSegments(
 	val mediaSegmentRepository by fragment.inject<MediaSegmentRepository>()
 
 	fragment?.clearSkipOverlay()
+
+	// Clear any existing segment monitoring
+	clearMediaSegmentMonitoring()
+
 	fragment.lifecycleScope.launch {
 		val mediaSegments = runCatching {
 			mediaSegmentRepository.getSegmentsForItem(item)
 		}.getOrNull().orEmpty()
 
+		// Collect segments with their actions
+		pendingMediaSegments.clear()
 		for (mediaSegment in mediaSegments) {
 			val action = mediaSegmentRepository.getMediaSegmentAction(mediaSegment)
-
-			when (action) {
-				MediaSegmentAction.SKIP -> addSkipAction(mediaSegment)
-				MediaSegmentAction.ASK_TO_SKIP -> addAskToSkipAction(mediaSegment)
-				MediaSegmentAction.NOTHING -> Unit
+			if (action != MediaSegmentAction.NOTHING) {
+				pendingMediaSegments.add(MediaSegmentActionData(mediaSegment, action))
 			}
+		}
+
+		// Start position monitoring if we have segments to handle
+		if (pendingMediaSegments.isNotEmpty()) {
+			startMediaSegmentMonitoring()
 		}
 
 		callback()
 	}
 }
 
-@OptIn(UnstableApi::class)
-private fun PlaybackController.addSkipAction(mediaSegment: MediaSegmentDto) {
-	mVideoManager.mExoPlayer
-		.createMessage { _, _ ->
-			// We can't seek directly on the ExoPlayer instance as not all media is seekable
-			// the seek function in the PlaybackController checks this and optionally starts a transcode
-			// at the requested position
-			fragment.lifecycleScope.launch(Dispatchers.Main) {
-				seek(mediaSegment.end.inWholeMilliseconds, true)
+/**
+ * Start monitoring playback position for media segment triggers.
+ */
+private fun PlaybackController.startMediaSegmentMonitoring() {
+	if (mediaSegmentHandler == null) {
+		mediaSegmentHandler = Handler(Looper.getMainLooper())
+	}
+
+	mediaSegmentRunnable = object : Runnable {
+		override fun run() {
+			if (!isPlaying) {
+				// Continue monitoring even when paused
+				mediaSegmentHandler?.postDelayed(this, 500)
+				return
 			}
+
+			val currentPosition = currentPosition
+
+			// Check each pending segment
+			for (segmentData in pendingMediaSegments) {
+				if (segmentData.triggered) continue
+
+				val segmentStart = segmentData.segment.start.inWholeMilliseconds
+
+				// Trigger if we're at or past the segment start
+				// Use a small window to account for polling interval
+				if (currentPosition >= segmentStart && currentPosition < segmentStart + 1000) {
+					segmentData.triggered = true
+
+					when (segmentData.action) {
+						MediaSegmentAction.SKIP -> {
+							Timber.i("Auto-skipping media segment at position $currentPosition")
+							fragment.lifecycleScope.launch(Dispatchers.Main) {
+								seek(segmentData.segment.end.inWholeMilliseconds, true)
+							}
+						}
+						MediaSegmentAction.ASK_TO_SKIP -> {
+							Timber.i("Showing skip prompt at position $currentPosition")
+							fragment?.askToSkip(segmentData.segment.end)
+						}
+						MediaSegmentAction.NOTHING -> Unit
+					}
+				}
+			}
+
+			// Continue monitoring
+			mediaSegmentHandler?.postDelayed(this, 250)
 		}
-		// Segments at position 0 will never be hit by ExoPlayer so we need to add a minimum value
-		.setPosition(mediaSegment.start.inWholeMilliseconds.coerceAtLeast(1))
-		.setDeleteAfterDelivery(false)
-		.send()
+	}
+
+	mediaSegmentHandler?.post(mediaSegmentRunnable!!)
 }
 
-@OptIn(UnstableApi::class)
-private fun PlaybackController.addAskToSkipAction(mediaSegment: MediaSegmentDto) {
-	mVideoManager.mExoPlayer
-		.createMessage { _, _ ->
-			fragment?.askToSkip(mediaSegment.end)
-		}
-		// Segments at position 0 will never be hit by ExoPlayer so we need to add a minimum value
-		.setPosition(mediaSegment.start.inWholeMilliseconds.coerceAtLeast(1))
-		.setDeleteAfterDelivery(false)
-		.send()
+/**
+ * Clear media segment monitoring.
+ */
+private fun clearMediaSegmentMonitoring() {
+	mediaSegmentRunnable?.let { mediaSegmentHandler?.removeCallbacks(it) }
+	mediaSegmentRunnable = null
+	pendingMediaSegments.clear()
 }
